@@ -9,7 +9,7 @@ export class AppController {
 
   @Get('healthz')
   health(@Res() response: Response) {
-    return response.sendStatus(HttpStatus.OK);
+    return response.status(HttpStatus.OK).send({ service: 'M2', ok: true });
   }
   
   @MessagePattern('JOB', Transport.RMQ)
