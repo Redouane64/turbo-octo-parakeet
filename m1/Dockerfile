@@ -9,12 +9,12 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY --chown=node:node package*.json ./
 # Install app dependencies
-RUN yarn global add @nestjs/cli
-RUN yarn install --frozen-lockfile --production
+RUN npm i -g @nestjs/cli
+RUN npm ci --production
 # Bundle app source
 COPY . .
 # Creates a "dist" folder with the production build
-RUN yarn run build
+RUN npm run build
 
 # build production artifacts stage
 FROM node:20-alpine AS deploy
