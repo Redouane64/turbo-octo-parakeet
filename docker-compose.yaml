@@ -1,0 +1,49 @@
+version: '3'
+
+networks:
+  turbo-octo-network:
+    name: turbo-octo
+    driver: bridge
+
+services:
+  rabbitmq:
+    container_name: turbo-octo-rabbitmq
+    image: rabbitmq:3.11-management-alpine
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - turbo-octo-network
+    restart: always
+
+  m2:
+    container_name: turbo-octo-m2
+    build:
+      context: ./m2
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - RMQ_URL=amqp://turbo-octo-rabbitmq
+      - RMQ_QUEUE=jobs
+    networks:
+      - turbo-octo-network
+    depends_on:
+      - rabbitmq
+
+  m1:
+    container_name: turbo-octo-m1
+    build:
+      context: ./m1
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - RMQ_URL=amqp://turbo-octo-rabbitmq
+      - RMQ_QUEUE=jobs
+      - PORT=3001
+    networks:
+      - turbo-octo-network
+    ports:
+      - 3001:3001
+    depends_on:
+      - rabbitmq
+      - m2
