@@ -29,8 +29,10 @@ export class AppController {
       this.client
         .send<IJobReply, IJob>('JOB', {
           n,
-        })
-        .pipe(timeout(10000)),
+        }),
+        /*
+        N.B: add this op if timeout is desirable: `.pipe(timeout(30000))`,
+        */
     );
 
     Logger.log(`Job completed with reply: ${JSON.stringify(reply)}`);
